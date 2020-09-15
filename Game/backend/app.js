@@ -7,9 +7,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 let logArray = [];
-app.post('/add-to-log', (req, res)=> {
-      logArray.push(req.body.message);
-      res.send(logArray);
+app.post('/add-to-log', (req, res) => {
+  logArray.push(req.body.message);
+  res.send(logArray);
 });
 
 app.listen(8081, () => {
