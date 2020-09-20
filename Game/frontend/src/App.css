@@ -25,6 +25,11 @@
   flex-direction: row;
   margin: 0 auto;  
 }
+
+.game-board{
+  min-width: 237px;
+}
+
  /*Game Info*/
 .game-turn{
   margin-left: 20px;

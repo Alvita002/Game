@@ -74,6 +74,16 @@ export default class Game extends Component {
             xIsNext: true,
             stepNumber: 0,
         });
+        axios
+            .put("http://localhost:8081/new-game")
+            .then((response)=> {
+                this.setState({
+                    message:response.data,
+                });
+            })
+            .catch((error)=>{
+                console.log(error);
+            });
     }
 
     render() {

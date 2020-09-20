@@ -12,6 +12,12 @@ app.post('/add-to-log', (req, res) => {
   res.send(logArray);
 });
 
+app.put('/new-game', (req,res) => { 
+  logArray = [];
+  logArray.push("New game started");
+  res.send(logArray);
+});
+
 app.listen(8081, () => {
   console.log("Server listening on port 8081");
 });
