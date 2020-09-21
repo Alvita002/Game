@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Board from "./Board";
-import axios from "axios";
+import * as gameApi from "../api/gameApi";
 
 export default class Game extends Component {
     state = {
@@ -9,6 +9,24 @@ export default class Game extends Component {
         message: ["Start game"],
         history: [{ squares: Array(9).fill(null) }],
     };
+
+    gameData = {
+        history: [],
+        xIsNext: true,
+        stepNumber: 0
+    };
+
+    componentDidMount() {
+        gameApi.getGameData().then(result => {
+            if (result !== undefined && result !== '') {
+                this.setState({
+                    history: result.gameData.history,
+                    xIsNext: result.gameData.xIsNext,
+                    stepNumber: result.gameData.stepNumber,
+                });
+            }
+        });
+    }
 
     handleClick(i) {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -25,22 +43,28 @@ export default class Game extends Component {
             }),
             xIsNext: !this.state.xIsNext,
             stepNumber: history.length,
+        }, () => {
+            this.logData(i);
+            this.submitStep();
         });
-        this.logData(i);
+    }
+
+    submitStep() {
+        let gameData = {
+            history: this.state.history,
+            xIsNext: this.state.xIsNext,
+            stepNumber: this.state.stepNumber
+        };
+        gameApi.postGameStep(gameData);
     }
 
     logData(i) {
         let message = this.getMessage(i);
-        axios
-            .post("http://localhost:8081/add-to-log", { message })
-            .then((response) => {
-                this.setState({
-                    message: response.data,
-                });
-            })
-            .catch((error) => {
-                console.log(error);
+        gameApi.postMessageToLog(message).then(message => {
+            this.setState({
+                message: message
             });
+        })
     }
 
     getMessage(square) {
@@ -74,16 +98,11 @@ export default class Game extends Component {
             xIsNext: true,
             stepNumber: 0,
         });
-        axios
-            .put("http://localhost:8081/new-game")
-            .then((response)=> {
-                this.setState({
-                    message:response.data,
-                });
-            })
-            .catch((error)=>{
-                console.log(error);
+        gameApi.resetGame().then(message => {
+            this.setState({
+                message: message
             });
+        })
     }
 
     render() {
